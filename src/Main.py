@@ -4,6 +4,6 @@ from src.sentiment.sentiment_analysis import SentimentAnalysis
 
 PATH: str = "output_file_twitch.csv"
 if __name__ == '__main__':
-   # DataFrameTwitch(PATH)
-    #CleanDataFrameTwitch(PATH)
+    DataFrameTwitch(PATH)
+    CleanDataFrameTwitch(PATH)
     SentimentAnalysis(PATH)
