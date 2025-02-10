@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from wordcloud import WordCloud, STOPWORDS
 import pandas as pd
+from collections import Counter
 
 
 class SentimentVisualization(SentimentVisualizationInterface):
@@ -22,6 +23,7 @@ class SentimentVisualization(SentimentVisualizationInterface):
         self._sentimect = sentimect
         self.plot_sentiment()
         self.generate_wordclouds()
+        self.plot_word()
 
     def plot_sentiment(self):
         # Plot sentiment comparison
@@ -85,6 +87,42 @@ class SentimentVisualization(SentimentVisualizationInterface):
         plt.imshow(negative_cloud_hi, interpolation='bilinear')
         plt.axis("off")
         plt.title("Negative Words - Human Influencers")
+
+        plt.tight_layout()
+        plt.show()
+
+
+    def plot_word(self):
+        """
+        Generate bar plots to show the frequency of words for both Virtual and Human Influencers.
+        """
+
+        def get_word_frequencies(text):
+            words = text.split()
+            return Counter(words)
+
+        # Text data
+        vi_text = " ".join(self._sentimect._virtual_scores["Cleaned_Text"].tolist())
+        hi_text = " ".join(self._sentimect._real_scores["Cleaned_Text"].tolist())
+
+        # Word frequencies
+        vi_frequencies = get_word_frequencies(vi_text).most_common(10)
+        hi_frequencies = get_word_frequencies(hi_text).most_common(10)
+
+        # Convert to DataFrame
+        vi_df = pd.DataFrame(vi_frequencies, columns=['Word', 'Frequency'])
+        hi_df = pd.DataFrame(hi_frequencies, columns=['Word', 'Frequency'])
+
+        # Plot
+        plt.figure(figsize=(12, 6))
+
+        plt.subplot(1, 2, 1)
+        sns.barplot(data=vi_df, x='Frequency', y='Word', palette="viridis")
+        plt.title("Top 10 Words - Virtual Influencers")
+
+        plt.subplot(1, 2, 2)
+        sns.barplot(data=hi_df, x='Frequency', y='Word', palette="magma")
+        plt.title("Top 10 Words - Human Influencers")
 
         plt.tight_layout()
         plt.show()
